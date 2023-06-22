@@ -1,6 +1,6 @@
 <!-- center this svg -->
 <div align="center">
-<img src="https://raw.githubusercontent.com/dagimg-dot/ContactEase/main/public/company_logo.svg?token=GHSAT0AAAAAACDYVE3CEWABZCU2RJHLAO7EZEUJQ7Q" width="100">
+<img src="./public/company_logo.svg" width="100">
 </div>
 
 #  Contact Ease
