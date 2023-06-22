@@ -1,42 +1,32 @@
-# Nuxt 3 Minimal Starter
+<!-- center this svg -->
+<div align="center">
+<img src="https://raw.githubusercontent.com/dagimg-dot/ContactEase/main/public/company_logo.svg?token=GHSAT0AAAAAACDYVE3CEWABZCU2RJHLAO7EZEUJQ7Q" width="100">
+</div>
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+#  Contact Ease
 
-## Setup
+Contact Ease is a web application that allows users to manage their contacts. Users can add, edit, and delete contacts. Users can also search for contacts by name, email, or phone number.
 
-Make sure to install the dependencies:
+## Getting Started
 
-```bash
-# yarn
-yarn install
+### Prerequisites
 
-# npm
-npm install
+- [Node.js](https://nodejs.org/en/)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) (yarn is recommended)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
-# pnpm
-pnpm install --shamefully-hoist
-```
+### Installation
 
-## Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
-npm run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+1. Clone the repo
+   ```sh
+   git clone https://github.com/dagimg-dot/ContactEase.git
+    ```
+2. Install NPM packages
+    ```sh
+    yarn install
+    ```
+3. Run the app
+    ```sh
+    yarn dev
+    ```
