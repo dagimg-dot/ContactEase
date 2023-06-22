@@ -1,48 +1,22 @@
 <template>
-    <div class="flex flex-wrap">
-      <CharacterCard
-        v-for="{ id, name, image, status, species, location } in data.characters.results"
-        :key="id"
-        :id="id"
-        :name="name"
-        :image="image"
-        :status="status"
-        :species="species"
-        :location="location.name"
-      />
+  <div class="flex flex-wrap">
+    <div v-for="user in users">
+      <p>{{ user.username }}</p>
     </div>
-  </template>
-  <script lang="ts" setup>
-  type CharactersResults = {
-    characters: {
-      results: {
-        id: string,
-        name: string,
-        image: string,
-        status: string,
-        species: string,
-        location: {
-          name: string
-        }
-      }[]
-    }
-  }
-  
-  const query = gql`
-  query getCharacters {
-    characters {
-      results {
-        name
-        image
-        status
-        id
-        species
-        location {
-          name
-        }
-      }
-    }
-  }
-  `
-  const { data } = await useAsyncQuery<CharactersResults>(query)
-  </script>
+  </div>
+</template>
+
+<script setup>
+
+import user from '../apollo/queries/fetchUser.gql'
+
+const { data } = await useAsyncQuery(user)
+
+const users = data.value.user
+
+try {
+  console.log(data.value.user[0].username)
+} catch (error) {
+  console.log(error)
+}
+</script>
