@@ -1,0 +1,2 @@
+CREATE TABLE "public"."contacts" ("contact_id" uuid NOT NULL DEFAULT gen_random_uuid(), "first_name" text NOT NULL, "last_name" text NOT NULL, "email" text NOT NULL, "phone_number" integer NOT NULL, "address" text NOT NULL, "u_id" uuid NOT NULL, PRIMARY KEY ("contact_id") , FOREIGN KEY ("u_id") REFERENCES "public"."user"("user_id") ON UPDATE restrict ON DELETE restrict, UNIQUE ("contact_id"), UNIQUE ("phone_number"), UNIQUE ("email"));
+CREATE EXTENSION IF NOT EXISTS pgcrypto;

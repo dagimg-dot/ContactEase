@@ -1,0 +1,39 @@
+{
+  "name": "aa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "docker-compose up -d",
+    "dev:log": "docker-compose up -d && yarn all:log",
+    "down": "docker-compose down",
+    "restart": "docker-compose restart",
+    "all:log": "docker-compose logs -f --tail 100",
+    "express:log": "docker-compose logs -f --tail 100 finance_express_3_0",
+    "graphql:log": "docker-compose logs -f --tail 100 finance_graphql_engine_3_0",
+    "hasura:init": "hasura init hasura",
+    "hasura": "hasura --project hasura --envfile ../.env",
+    "hasura:prod": "hasura --project hasura --envfile ../.env.prod",
+    "console": "yarn hasura console --api-port 2002 --console-port 2003",
+    "console:prod": "yarn hasura:prod console --api-port 4074 --console-port 4075",
+    "migrate": "yarn hasura migrate apply && yarn hasura metadata apply",
+    "migrate:prod": "yarn hasura:prod migrate apply && yarn hasura metadata apply",
+    "migrate:status": "yarn hasura migrate status",
+    "migrate:status:prod": "yarn hasura:prod migrate status",
+    "seed": "yarn hasura seeds apply",
+    "rebuild": "docker-compose build contactease_express && yarn dev"
+  },
+  "devDependencies": {
+    "hasura-cli": "^1.3.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "morgan": "^1.10.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

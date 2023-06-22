@@ -1,0 +1,12 @@
+actions:
+  - name: say_hi
+    definition:
+      kind: ""
+      handler: '{{ACTION_BASE_URL}}/say_hi'
+custom_types:
+  enums: []
+  input_objects:
+    - name: SampleInput
+  objects:
+    - name: SayHiOupt
+  scalars: []

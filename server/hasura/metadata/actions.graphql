@@ -1,0 +1,14 @@
+type Query {
+  say_hi(
+    name: String!
+  ): SayHiOupt!
+}
+
+input SampleInput {
+  name: String!
+}
+
+type SayHiOupt {
+  message: String!
+}
+

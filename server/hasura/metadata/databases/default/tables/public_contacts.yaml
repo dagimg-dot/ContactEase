@@ -1,0 +1,3 @@
+table:
+  name: contacts
+  schema: public
