@@ -29,14 +29,12 @@ const execute = async (variables, reqHeaders) => {
 
 const login = async (req, res) => {
   try {
-    console.log(req.body);
-    // console.log(req.body.input);
     const { email, password } = req.body;
 
     // make the req headers handle the hasura role anonymously
     const headers = {
       "Content-Type": "application/json",
-      "x-hasura-admin-secret": "secret",
+      "x-hasura-role": "anonymous",
     };
 
     const { data, errors } = await execute({ email, password }, headers);
