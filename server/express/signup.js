@@ -1,11 +1,16 @@
 const fetch = require("node-fetch");
 
 const HASURA_OPERATION = `
-query ($email: String!, $password: String!) {
-  user(where: {email: {_eq: $email}, password: {_eq: $password}}) {
-    user_id
+  mutation ($username: String!, $email: String!, $password: String!) {
+    insert_user_one(object: {
+      username: $username,
+      email: $email,
+      password: $password,
+    }) {
+      user_id
+    }
   }
-}`;
+`;
 
 const execute = async (variables, reqHeaders) => {
   const fetchResponse = await fetch(
@@ -27,19 +32,19 @@ const execute = async (variables, reqHeaders) => {
   return await fetchResponse.json();
 };
 
-const login = async (req, res) => {
+const signup = async (req, res) => {
   try {
-    console.log(req.body);
-    // console.log(req.body.input);
-    const { email, password } = req.body;
+    const { username, email, password } = req.body.input;
 
     // make the req headers handle the hasura role anonymously
     const headers = {
       "Content-Type": "application/json",
       "x-hasura-admin-secret": "secret",
     };
-
-    const { data, errors } = await execute({ email, password }, headers);
+    const { data, errors } = await execute(
+      { username, email, password },
+      headers
+    );
 
     if (errors) {
       return res.status(400).json({
@@ -47,17 +52,8 @@ const login = async (req, res) => {
       });
     }
 
-    // return true with the user id if the user exists else return false
-    if (data.user.length === 0) {
-      return res.json({
-        success: false,
-        accessToken: "",
-      });
-    }
-
     return res.json({
-      success: true,
-      accessToken: data.user[0].user_id,
+      ...data.insert_user_one,
     });
   } catch (err) {
     console.log(err);
@@ -67,4 +63,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = login;
+module.exports = signup;
