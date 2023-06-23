@@ -1,12 +1,28 @@
 actions:
-  - name: say_hi
-    definition:
-      kind: ""
-      handler: '{{ACTION_BASE_URL}}/say_hi'
+- name: login
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/login'
+  permissions:
+  - role: anonymous
+- name: say_hi
+  definition:
+    kind: ""
+    handler: '{{ACTION_BASE_URL}}/say_hi'
+  permissions:
+  - role: anonymous
+- name: signup
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/signup'
+  permissions:
+  - role: anonymous
 custom_types:
   enums: []
   input_objects:
-    - name: SampleInput
+  - name: SampleInput
   objects:
-    - name: SayHiOupt
+  - name: SayHiOupt
+  - name: LoginResponse
+  - name: signupOutput
   scalars: []

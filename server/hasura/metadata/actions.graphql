@@ -1,14 +1,38 @@
+type Mutation {
+  login (
+    email: String!
+    password: String!
+  ): LoginResponse
+}
+
 type Query {
-  say_hi(
+  say_hi (
     name: String!
   ): SayHiOupt!
 }
 
+type Mutation {
+  signup (
+    username: String!
+    email: String!
+    password: String!
+  ): signupOutput
+}
+
 input SampleInput {
-  name: String!
+  name : String!
 }
 
 type SayHiOupt {
-  message: String!
+  message : String!
+}
+
+type LoginResponse {
+  success : Boolean!
+  accessToken : String!
+}
+
+type signupOutput {
+  user_id : uuid!
 }
 
