@@ -1,17 +1,22 @@
-require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config();
 
 const express = require("express");
-const body_parser = require("body-parser");
-const morgan = require("morgan");
-const helmet = require('helmet');
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const app = express();
 
-app.use(helmet());
-app.use(morgan("combined"));
-app.use(body_parser.json({ limit: "100mb" }));
+const PORT = process.env.PORT || 3000;
 
+app.use(bodyParser.json());
+app.use(cors());
+
+app.post("/signup", require("./express/signup"));
+app.post("/login", require("./express/login"));
 app.post("/say_hi", require("./express/say-hi"));
+
+app.listen(PORT);
 
 const port = process.env.EXPRESS_PORT;
 
