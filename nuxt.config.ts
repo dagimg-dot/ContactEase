@@ -1,5 +1,7 @@
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
+  // enable dev tools
+  devtools: true,
   modules: ["@nuxtjs/apollo", "@nuxtjs/tailwindcss"],
 
   app: {
@@ -15,7 +17,7 @@ export default defineNuxtConfig({
         },
         { name: "format-detection", content: "telephone=no" },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/company_logo.svg" }],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/company_logo.svg" }, { rel: "stylesheet", href: "/global.css" }],
     },
   },
 
@@ -33,4 +35,6 @@ export default defineNuxtConfig({
       },
     },
   },
+
+  // css: ["/public/global.css"],
 });
