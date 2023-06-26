@@ -16,6 +16,8 @@ type Mutation {
     username: String!
     email: String!
     password: String!
+    firstname: String!
+    lastname: String!
   ): signupOutput
 }
 

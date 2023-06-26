@@ -1,6 +1,18 @@
 table:
   name: user
   schema: public
+insert_permissions:
+- permission:
+    check: {}
+    columns:
+    - email
+    - first_name
+    - last_name
+    - password
+    - username
+    - created_at
+    - user_id
+  role: anonymous
 select_permissions:
 - permission:
     columns:
