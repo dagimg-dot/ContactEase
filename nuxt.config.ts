@@ -17,7 +17,10 @@ export default defineNuxtConfig({
         },
         { name: "format-detection", content: "telephone=no" },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/company_logo.svg" }, { rel: "stylesheet", href: "/global.css" }],
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/company_logo.svg" },
+        { rel: "stylesheet", href: "/global.css" },
+      ],
     },
   },
 
@@ -36,5 +39,5 @@ export default defineNuxtConfig({
     },
   },
 
-  // css: ["/public/global.css"],
+  css: ["vue-final-modal/style.css"],
 });
