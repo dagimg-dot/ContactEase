@@ -10,13 +10,13 @@
                                 class="font-medium text-red-600 hover:text-red-500 cursor-pointer">Sign up</a></p>
                     </div>
                 </div>
-                <form class="mt-8 space-y-5" @submit="onSubmit">
+                <form class="mt-8 space-y-5" @submit.prevent="onSubmit">
                     <div>
                         <label class="font-medium">
                             Email
                         </label>
                         <input type="email" required v-model="email" name="email"
-                            class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg" />
+                            class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
                         <span class="text-red-800 px-1 text-sm">{{ errors.email }}</span>
                     </div>
                     <div>
@@ -24,18 +24,13 @@
                             Password
                         </label>
                         <input type="password" required v-model="password" name="password"
-                            class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg" />
+                            class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
                         <span v-if="!isEmp" class="text-red-800 px-1 text-sm">{{ errors.password }}</span>
                     </div>
                     <div v-if="showDialog" class="w-full border-2 border-red-400 flex rounded-lg px-4 py-2 justify-between">
                         <span>Incorrect email or password.</span>
-                        <div @click="closeDialog">
-                            <svg class="h-5 w-5 text-red-400 hover:text-red-500 cursor-pointer"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="red">
-                                <path fill-rule="evenodd"
-                                    d="M10.707 10l4.147-4.146a.5.5 0 10-.708-.708L10 9.293 5.854 5.146a.5.5 0 00-.708.708L9.293 10l-4.147 4.146a.5.5 0 10.708.708L10 10.707l4.146 4.147a.5.5 0 00.708-.708L10.707 10z"
-                                    clip-rule="evenodd" />
-                            </svg>
+                        <div>
+                            <CloseIcon class="cursor-pointer" @click="closeDialog" />
                         </div>
                     </div>
                     <button type="submit" v-if="!processing"
@@ -54,8 +49,9 @@
                         </svg>
                         <span class="font-medium"> Logging in... </span>
                     </button>
+                    <!-- <MyModalPreview :showModal="showModal" /> -->
                     <!-- <div class="text-center">
-                            <a class="hover:text-indigo-600">Forgot password?</a>
+                            <a class="hover:text-red-600">Forgot password?</a>
                         </div> -->
                 </form>
             </div>
@@ -64,6 +60,25 @@
 </template>
   
 <script setup>
+
+// Error modal
+import { useModal } from 'vue-final-modal'
+import Modal from '../modals/Modal.vue';
+
+const { open } = useModal({
+    component: Modal,
+    attrs: {
+        title: 'Error',
+    },
+    slots: {
+        default: '<p>Server timed out !</p>',
+    },
+
+});
+
+const openModal = () => {
+    open();
+};
 
 // validation
 import { useForm, useField } from 'vee-validate';
@@ -151,7 +166,10 @@ const login = () => {
             }
 
         })
-        .catch(err => console.log(err));
+        .catch(() => {
+            processing.value = false;
+            openModal();
+        });
 };
 
 </script>
