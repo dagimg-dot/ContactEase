@@ -1,73 +1,160 @@
 <template>
-    <div class="flex justify-center items-center h-screen">
-      <div class="w-1/3 bg-white shadow p-6 rounded">
-        <h2 class="text-2xl mb-4">Login</h2>
-        <form @submit.prevent="login">
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="email">email</label>
-            <input v-model="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" required>
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
-            <input v-model="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Password" required>
-          </div>
-          <div class="flex items-center justify-end mb-4">
-            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
-              Forgot Password?
-            </a>
-          </div>
-          <div class="flex items-center justify-center">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-              Sign In
-            </button>
-          </div>
-          <div class="flex items-center justify-center mt-4">
-            <p class="text-sm text-gray-600">Don't have an account? <a class="text-blue-500 hover:text-blue-800" href="#">Sign Up</a></p>
-          </div>
-        </form>
-      </div>
+    <div class="w-full h-screen flex flex-col items-center justify-center px-4">
+        <div class="max-w-sm w-full">
+            <div class=" text-gray-600">
+                <div class="flex flex-col text-center items-center">
+                    <CompanyLogoIcon class="scale-150" />
+                    <div class="mt-5 space-y-2">
+                        <h3 class="text-gray-800 text-2xl font-bold sm:text-3xl">Log in to your account</h3>
+                        <p class="">Don't have an account? <a @click="redirectToSignUp"
+                                class="font-medium text-red-600 hover:text-red-500 cursor-pointer">Sign up</a></p>
+                    </div>
+                </div>
+                <form class="mt-8 space-y-5" @submit="onSubmit">
+                    <div>
+                        <label class="font-medium">
+                            Email
+                        </label>
+                        <input type="email" required v-model="email" name="email"
+                            class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg" />
+                        <span class="text-red-800 px-1 text-sm">{{ errors.email }}</span>
+                    </div>
+                    <div>
+                        <label class="font-medium">
+                            Password
+                        </label>
+                        <input type="password" required v-model="password" name="password"
+                            class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg" />
+                        <span v-if="!isEmp" class="text-red-800 px-1 text-sm">{{ errors.password }}</span>
+                    </div>
+                    <div v-if="showDialog" class="w-full border-2 border-red-400 flex rounded-lg px-4 py-2 justify-between">
+                        <span>Incorrect email or password.</span>
+                        <div @click="closeDialog">
+                            <svg class="h-5 w-5 text-red-400 hover:text-red-500 cursor-pointer"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="red">
+                                <path fill-rule="evenodd"
+                                    d="M10.707 10l4.147-4.146a.5.5 0 10-.708-.708L10 9.293 5.854 5.146a.5.5 0 00-.708.708L9.293 10l-4.147 4.146a.5.5 0 10.708.708L10 10.707l4.146 4.147a.5.5 0 00.708-.708L10.707 10z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <button type="submit" v-if="!processing"
+                        class="w-full px-4 py-2 my-8 text-white font-medium bg-red-600 hover:bg-red-500 rounded-lg duration-150">Login
+                    </button>
+                    <button type="submit" v-else
+                        class="flex w-full justify-center items-center rounded-lg bg-red-600 hover:bg-red-500 px-4 py-2 text-white"
+                        disabled>
+                        <svg class="mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span class="font-medium"> Logging in... </span>
+                    </button>
+                    <!-- <div class="text-center">
+                            <a class="hover:text-indigo-600">Forgot password?</a>
+                        </div> -->
+                </form>
+            </div>
+        </div>
     </div>
-  </template>
+</template>
   
-  <script setup>
+<script setup>
 
-  const router = useRouter();
-  const email = ref('');
-  const password = ref('');
-  
-  const login = () => {
+// validation
+import { useForm, useField } from 'vee-validate';
+import * as yup from 'yup';
+
+const router = useRouter();
+const { handleSubmit, errors } = useForm();
+
+const { value: email } = useField(
+    'email',
+    yup
+        .string()
+        .trim()
+        .matches(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/, 'please enter a valid email')
+);
+
+const { value: password } = useField(
+    'password',
+    yup.string()
+        .trim()
+        .min(8, 'password must be at least 8 characters')
+);
+
+// hide error when password field is empty
+const isEmp = ref(false);
+
+const isEmpty = () => {
+    if (password.value === '') {
+        isEmp.value = true;
+        return true;
+    } else {
+        isEmp.value = false;
+        return false;
+    }
+};
+
+watchEffect(() => {
+    isEmpty();
+});
+
+// redirect to sign up when sign up text is clicked
+const redirectToSignUp = () => {
+    router.push('/signup');
+};
+
+// authentication statuses
+const processing = ref(false);
+const showDialog = ref(false);
+
+// close the error dialog
+const closeDialog = () => {
+    showDialog.value = false;
+};
+
+// run when login button is clicked
+const onSubmit = handleSubmit((values) => {
+    console.log(values);
+    processing.value = true;
+    showDialog.value = false;
+    login();
+});
+
+const login = () => {
     // Perform login logic here
     console.log('Email:', email.value);
     console.log('Password:', password.value);
 
-    // // Clear the form
-    // username.value = '';
-    // password.value = '';
-
     // make api call to express server
     fetch('http://localhost:2001/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email: email.value, password: password.value })
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email.value, password: password.value })
     })
-    .then(res => res.json())
-    .then(data => {
-      if(data.success) {
-        // redirect to dashboard
-        router.push('/about')
-      } else {
-        // show error message
-        alert("Invalid credentials");
-      }
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // redirect to dashboard
+                router.push('/about')
+            } else {
+                // show error message
+                showDialog.value = true;
+                processing.value = false;
+            }
 
-    })
-    .catch(err => console.log(err));    
-  };
+        })
+        .catch(err => console.log(err));
+};
 
-  </script>
+</script>
   
-  <style>
-  </style>
+<style scoped></style>
   
