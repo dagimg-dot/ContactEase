@@ -1,11 +1,13 @@
 const fetch = require("node-fetch");
 
 const HASURA_OPERATION = `
-  mutation ($username: String!, $email: String!, $password: String!) {
+  mutation ($username: String!, $email: String!, $password: String!,$firstname: String!, $lastname: String!) {
     insert_user_one(object: {
       username: $username,
       email: $email,
       password: $password,
+      first_name: $firstname,
+      last_name: $lastname
     }) {
       user_id
     }
@@ -34,15 +36,15 @@ const execute = async (variables, reqHeaders) => {
 
 const signup = async (req, res) => {
   try {
-    const { username, email, password } = req.body.input;
+    const { username, email, password, firstname, lastname } = req.body;
 
     // make the req headers handle the hasura role anonymously
     const headers = {
       "Content-Type": "application/json",
-      "x-hasura-admin-secret": "secret",
+      "x-hasura-role": "anonymous",
     };
     const { data, errors } = await execute(
-      { username, email, password },
+      { username, email, password, firstname, lastname },
       headers
     );
 
