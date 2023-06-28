@@ -17,7 +17,7 @@
                         </label>
                         <input type="email" required v-model="email" name="email"
                             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
-                        <span class="text-red-800 px-1 text-sm">{{ errors.email }}</span>
+                        <span v-if="!isFieldEmpty[0]" class="text-red-800 px-1 text-sm">{{ errors.email }}</span>
                     </div>
                     <div>
                         <label class="font-medium">
@@ -25,7 +25,7 @@
                         </label>
                         <input type="password" required v-model="password" name="password"
                             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
-                        <span v-if="!isEmp" class="text-red-800 px-1 text-sm">{{ errors.password }}</span>
+                        <span v-if="!isFieldEmpty[1]" class="text-red-800 px-1 text-sm">{{ errors.password }}</span>
                     </div>
                     <div v-if="showDialog" class="w-full border-2 border-red-400 flex rounded-lg px-4 py-2 justify-between">
                         <span>Incorrect email or password.</span>
@@ -102,21 +102,14 @@ const { value: password } = useField(
         .min(8, 'password must be at least 8 characters')
 );
 
-// hide error when password field is empty
-const isEmp = ref(false);
+// hide error when input field is empty
+const isFieldEmpty = ref([false, false]);
 
-const isEmpty = () => {
-    if (password.value === '') {
-        isEmp.value = true;
-        return true;
-    } else {
-        isEmp.value = false;
-        return false;
-    }
-};
+const isEmpty = (value, index) => value.value === '' ? isFieldEmpty.value[index] = true : isFieldEmpty.value[index] = false;
 
 watchEffect(() => {
-    isEmpty();
+    isEmpty(email, 0);
+    isEmpty(password, 1);
 });
 
 // redirect to sign up when sign up text is clicked
