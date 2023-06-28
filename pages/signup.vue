@@ -150,7 +150,7 @@ const isFieldEmpty = ref([false, false, false, false, false, false]);
 
 const isEmpty = (value, index) => value.value === '' ? isFieldEmpty.value[index] = true : isFieldEmpty.value[index] = false;
 
-const doesMatch = (value1, value2) => value1.value === '' || value2.value === '' ? errorPassword.value = '' : errorPassword.value = 'passwords must match';
+const doesMatch = (value1, value2) => value1.value === value2.value ? errorPassword.value = '' : errorPassword.value = 'passwords must match';
 
 // Listen for changes in input values
 watchEffect(() => {
@@ -165,6 +165,25 @@ watchEffect(() => {
 
 // authentication statuses
 const processing = ref(false);
+
+import { useModal } from 'vue-final-modal'
+import Modal from '../modals/Modal.vue';
+
+
+const openModal = (title, message) => {
+    const { open } = useModal({
+        component: Modal,
+        attrs: {
+            title: title,
+        },
+        slots: {
+            default: `<p>${message}</p>`,
+        },
+    });
+
+    open();
+};
+
 
 const onSubmit = handleSubmit((values) => {
     if(errorPassword.value !== '') {
@@ -201,14 +220,21 @@ const signup = () => {
         .then(data => {
             if (data.user_id) {
                 console.log("User created successfully");
-                alert("User created successfully");
-                // router.push('/login');
-            } else {
-                console.log("User creation failed");
-                alert("User creation failed");
+                openModal("Success", "User created successfully, log in to continue");
+                processing.value = false;
+                router.push('/login');
+            } else if(data.message){
+                if(data.message.includes('Uniqueness violation')) {
+                    openModal("Error", "User already exists");
+                } else {
+                    openModal("Error", "Something went wrong. Please try again later");
+                }   
+                processing.value = false;
             }
         })
         .catch(err => {
+            processing.value = false;
+            openModal("Error", "Something went wrong. Please try again later");
             console.log(err);
         })
 }
