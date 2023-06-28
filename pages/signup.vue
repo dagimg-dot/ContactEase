@@ -10,16 +10,7 @@
                                 class="font-medium text-red-600 hover:text-red-500 cursor-pointer">Log in</a></p>
                     </div>
                 </div>
-                <form class="mt-8 space-y-5" @submit="onSubmit">
-                    <!-- <div v-for="field in fields" :key="field.name">
-                        <label class="font-medium">{{ field.label }}</label>
-                        <input :type="field.type" v-model="form[field.name]" :name="field.name"
-                            :class="{ 'border-red-600': hasError(field.name) }"
-                            class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg"
-                            required />
-                        <span class="text-red-800 px-1 text-sm">{{ getErrorMessage(field.name)
-                        }}</span>
-                    </div> -->
+                <form class="mt-8 space-y-5" @submit.prevent="onSubmit">
                     <div>
                         <label class="font-medium">
                             First Name
@@ -27,7 +18,7 @@
                         <input type="text" required v-model="firstname" name="firstname"
                             :class="{ 'border-red-600': errors.firstname }"
                             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
-                        <span v-if="!isEmp" class="text-red-800 px-1 text-sm">{{ errors.firstname }}</span>
+                        <span v-if="!isFieldEmpty[0]" class=" text-red-800 px-1 text-sm">{{ errors.firstname }}</span>
                     </div>
                     <div>
                         <label class="font-medium">
@@ -36,7 +27,7 @@
                         <input type="text" required v-model="lastname" name="lastname"
                             :class="{ 'border-red-600': errors.lastname }"
                             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
-                        <span class="text-red-800 px-1 text-sm">{{ errors.lastname }}</span>
+                        <span v-if="!isFieldEmpty[1]" class="text-red-800 px-1 text-sm">{{ errors.lastname }}</span>
                     </div>
                     <div>
                         <label class="font-medium">
@@ -45,7 +36,7 @@
                         <input type="email" required v-model="email" name="email"
                             :class="{ 'border-red-600': errors.email }"
                             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
-                        <span class="text-red-800 px-1 text-sm">{{ errors.email }}</span>
+                        <span v-if="!isFieldEmpty[2]" class="text-red-800 px-1 text-sm">{{ errors.email }}</span>
                     </div>
                     <div>
                         <label class="font-medium">
@@ -54,24 +45,24 @@
                         <input type="text" required v-model="username" name="username"
                             :class="{ 'border-red-600': errors.username }"
                             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
-                        <span class="text-red-800 px-1 text-sm">{{ errors.username }}</span>
+                        <span v-if="!isFieldEmpty[3]" class="text-red-800 px-1 text-sm">{{ errors.username }}</span>
                     </div>
                     <div>
                         <label class="font-medium">
                             Password
                         </label>
-                        <input type="password" required v-model="password" name="password"
+                        <input type="text" v-model="password" name="password" required 
                             :class="{ 'border-red-600': errors.password }"
                             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
-                        <span class="text-red-800 px-1 text-sm">{{ errors.password }}</span>
+                        <span v-if="!isFieldEmpty[4]" class="text-red-800 px-1 text-sm">{{ errors.password }}</span>
                     </div>
                     <div>
                         <label class="font-medium">
                             Confirm Password
                         </label>
-                        <input type="password" required v-model="confirmPassword" name="confirmPassword"
+                        <input type="text" required v-model="confirmPassword" name="confirmPassword" 
                             class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-red-600 shadow-sm rounded-lg" />
-                        <span class="text-red-800 px-1 text-sm">{{ errors.confirmPassword }}</span>
+                        <span v-if="!isFieldEmpty[5]" class="text-red-800 px-1 text-sm">{{ errorPassword }}</span>
                     </div>
                     <button type="submit" v-if="!processing"
                         class="w-full px-4 py-2 text-white font-medium bg-red-600 hover:bg-red-500 rounded-lg duration-150">
@@ -98,32 +89,11 @@
 
 <script setup>
 
-// generate the input fields
-
-// const form = ref({
-//     firstname: '',
-//     lastname: '',
-//     email: '',
-//     username: '',
-//     password: '',
-//     confirmPassword: '',
-// });
-
-// const fields = [
-//     { name: 'firstname', type: 'text', label: 'First Name' },
-//     { name: 'lastname', type: 'text', label: 'Last Name' },
-//     { name: 'email', type: 'email', label: 'Email' },
-//     { name: 'username', type: 'text', label: 'User Name' },
-//     { name: 'password', type: 'password', label: 'Password' },
-//     { name: 'confirmPassword', type: 'password', label: 'Confirm Password' },
-// ];
-
 // routing to login page
 const router = useRouter();
 const redirectToLogin = () => {
     router.push('/login');
 }
-
 
 // form validation
 import { useForm, useField } from 'vee-validate';
@@ -159,6 +129,7 @@ const { value: username } = useField(
         .string()
         .trim()
         .min(5, 'username must be at least 5 characters')
+        .matches(/^[a-zA-Z]+$/, 'Username must contain only alphabet')
 )
 
 const { value: password } = useField(
@@ -170,52 +141,38 @@ const { value: password } = useField(
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, 'password must contain at least one uppercase letter, one lowercase letter and one number')
 )
 
-const { value: confirmPassword } = useField(
-    'confirmPassword',
-    yup
-        .string()
-        .trim()
-        .oneOf([yup.ref('password')], 'passwords must match')
-)
+const confirmPassword = ref('');
+
+const errorPassword = ref('');
 
 
-// const validateField = (fieldName) => {
-//     const field = fields.find((f) => f.name === fieldName);
-//     return field.value === '' ? false : true;
-// };
+const isFieldEmpty = ref([false, false, false, false, false, false]);
 
-// const hasError = (fieldName) => {
-//     return errors.value[fieldName] ? true : false;
-// };
+const isEmpty = (value, index) => value.value === '' ? isFieldEmpty.value[index] = true : isFieldEmpty.value[index] = false;
 
-// const getErrorMessage = (fieldName) => {
-//     return errors.value[fieldName];
-// };
+const doesMatch = (value1, value2) => value1.value === '' || value2.value === '' ? errorPassword.value = '' : errorPassword.value = 'passwords must match';
 
-// hide error when password field is empty for the first name field
-const isEmp = ref(false);
-
-const isEmpty = () => {
-    if (firstname.value === '') {
-        isEmp.value = true;
-        return true;
-    } else {
-        isEmp.value = false;
-        return false;
-    }
-};
-
+// Listen for changes in input values
 watchEffect(() => {
-    isEmpty();
+    isEmpty(firstname, 0);
+    isEmpty(lastname, 1);
+    isEmpty(email, 2);
+    isEmpty(username, 3);
+    isEmpty(password, 4);
+    isEmpty(confirmPassword, 5);
+    doesMatch(password, confirmPassword)
 });
 
 // authentication statuses
 const processing = ref(false);
 
-
 const onSubmit = handleSubmit((values) => {
+    if(errorPassword.value !== '') {
+        return;
+    }
     console.log(values);
     processing.value = true;
+    console.log('clicked');
     signup();
 });
 
@@ -225,6 +182,7 @@ const signup = () => {
     console.log('Email: ', email.value);
     console.log('User Name: ', username.value);
     console.log('Password:', password.value);
+    console.log('Confirm Password: ', confirmPassword.value);
 
     fetch('http://localhost:2001/signup', {
         method: 'POST',
@@ -243,9 +201,11 @@ const signup = () => {
         .then(data => {
             if (data.user_id) {
                 console.log("User created successfully");
-                router.push('/login');
+                alert("User created successfully");
+                // router.push('/login');
             } else {
                 console.log("User creation failed");
+                alert("User creation failed");
             }
         })
         .catch(err => {
