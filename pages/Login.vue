@@ -152,6 +152,8 @@ const login = () => {
             if (data.success) {
                 // redirect to dashboard
                 router.push('/about')
+                // generate a jwt token for hasura and store it in session storage
+                sessionStorage.setItem('token', data.accessToken);
             } else {
                 // show error message
                 showDialog.value = true;
