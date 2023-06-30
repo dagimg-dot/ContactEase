@@ -1,7 +1,6 @@
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
-  // enable dev tools
-  devtools: true,
+  // enable dev tool
   modules: ["@nuxtjs/apollo", "@nuxtjs/tailwindcss"],
 
   app: {
@@ -23,7 +22,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-
+  
   apollo: {
     clients: {
       default: {
@@ -32,7 +31,7 @@ export default defineNuxtConfig({
         httpLinkOptions: {
           credentials: "same-origin",
           headers: {
-            "x-hasura-admin-secret": "secret",
+            // "x-hasura-admin-secret": "secret",
           },
         },
       },
