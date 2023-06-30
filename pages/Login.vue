@@ -61,6 +61,10 @@
   
 <script setup>
 
+definePageMeta({
+    middleware: 'guest'
+})
+
 // imports 
 
 import { useModal } from 'vue-final-modal'
@@ -137,6 +141,13 @@ const onSubmit = handleSubmit((values) => {
     login();
 });
 
+// blue print for the user object
+
+const user = {
+    id: '',
+    username: '',
+};
+
 const login = () => {
     console.log('Email:', email.value);
     console.log('Password:', password.value);
@@ -152,8 +163,16 @@ const login = () => {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
+                // store user data in authUser composable
+                console.log("success");
+                const { setUser } = useAuth();
+                user.id = data.user_id;
+                user.username = data.username;
+                console.log(data.username);
+                setUser(user);
                 // redirect to contacts dynamic route
-                router.push(`/contacts/${data.accessToken}`);
+                router.push(`/contacts/${data.user_id}`);
+                console.log("after redirect");
                 // generate a jwt token for hasura and store it in session storage
                 sessionStorage.setItem('token', data.accessToken);
             } else {
