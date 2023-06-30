@@ -14,7 +14,7 @@ app.use(cors());
 
 app.post("/signup", require("./express/signup"));
 app.post("/login", require("./express/login"));
-app.post("/say_hi", require("./express/say-hi"));
+// app.post("/say_hi", require("./express/say-hi"));
 
 app.listen(PORT);
 
