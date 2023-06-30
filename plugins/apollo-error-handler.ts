@@ -1,7 +1,14 @@
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.hook('apollo:error', (error) => {
-    console.error(error)
+// import { defineApolloClient } from "@nuxtjs/apollo";
 
-    // Handle different error cases
-  })
-})
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.hook("apollo:error", (error) => {
+    const { graphQLErrors, networkError } = error;
+    const { message, locations, path } = graphQLErrors[0];
+    console.log(
+      `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`   
+    )
+    console.log(networkError)
+
+  });
+
+});
