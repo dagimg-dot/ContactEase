@@ -61,9 +61,25 @@
   
 <script setup>
 
-// Error modal
+// imports 
+
 import { useModal } from 'vue-final-modal'
 import Modal from '../modals/Modal.vue';
+import { useForm, useField } from 'vee-validate';
+import * as yup from 'yup';
+
+// reactives
+
+const isFieldEmpty = ref([false, false]);
+const processing = ref(false);
+const showDialog = ref(false);
+
+// composables
+
+const router = useRouter();
+const { handleSubmit, errors } = useForm();
+
+// modal
 
 const { open } = useModal({
     component: Modal,
@@ -76,16 +92,7 @@ const { open } = useModal({
 
 });
 
-const openModal = () => {
-    open();
-};
-
-// validation
-import { useForm, useField } from 'vee-validate';
-import * as yup from 'yup';
-
-const router = useRouter();
-const { handleSubmit, errors } = useForm();
+// client side validation
 
 const { value: email } = useField(
     'email',
@@ -102,8 +109,7 @@ const { value: password } = useField(
         .min(8, 'password must be at least 8 characters')
 );
 
-// hide error when input field is empty
-const isFieldEmpty = ref([false, false]);
+// methods
 
 const isEmpty = (value, index) => value.value === '' ? isFieldEmpty.value[index] = true : isFieldEmpty.value[index] = false;
 
@@ -112,21 +118,18 @@ watchEffect(() => {
     isEmpty(password, 1);
 });
 
-// redirect to sign up when sign up text is clicked
 const redirectToSignUp = () => {
     router.push('/signup');
 };
 
-// authentication statuses
-const processing = ref(false);
-const showDialog = ref(false);
-
-// close the error dialog
 const closeDialog = () => {
     showDialog.value = false;
 };
 
-// run when login button is clicked
+const openModal = () => {
+    open();
+};
+
 const onSubmit = handleSubmit((values) => {
     console.log(values);
     processing.value = true;
@@ -135,7 +138,6 @@ const onSubmit = handleSubmit((values) => {
 });
 
 const login = () => {
-    // Perform login logic here
     console.log('Email:', email.value);
     console.log('Password:', password.value);
 
@@ -150,8 +152,8 @@ const login = () => {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // redirect to dashboard
-                router.push('/about')
+                // redirect to contacts dynamic route
+                router.push(`/contacts/${data.accessToken}`);
                 // generate a jwt token for hasura and store it in session storage
                 sessionStorage.setItem('token', data.accessToken);
             } else {
