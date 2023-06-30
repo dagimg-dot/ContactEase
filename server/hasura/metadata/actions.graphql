@@ -31,7 +31,8 @@ type SayHiOupt {
 
 type LoginResponse {
   success : Boolean!
-  accessToken : String!
+  user_id : String!
+  username : String!
 }
 
 type signupOutput {

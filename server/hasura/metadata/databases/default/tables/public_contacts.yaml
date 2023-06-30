@@ -1,3 +1,47 @@
 table:
   name: contacts
   schema: public
+insert_permissions:
+- permission:
+    check: {}
+    columns:
+    - phone_number
+    - address
+    - email
+    - first_name
+    - last_name
+    - contact_id
+    - g_id
+    - u_id
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - phone_number
+    - address
+    - email
+    - first_name
+    - last_name
+    - contact_id
+    - g_id
+    - u_id
+    filter: {}
+  role: user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - phone_number
+    - address
+    - email
+    - first_name
+    - last_name
+    - contact_id
+    - g_id
+    - u_id
+    filter: {}
+  role: user
+delete_permissions:
+- permission:
+    filter: {}
+  role: user
