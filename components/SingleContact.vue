@@ -1,13 +1,13 @@
 <template>
     <div class="flex mr-3 py-2 border shadow-lg hover:shadow-xl rounded-2xl justify-between items-center">
         <ul class="flex gap-48 text-gray-600 ml-3">
-            <li>Name</li>
-            <li>Email</li>
-            <li>Phone Number</li>
-            <li>Address</li>
-            <li>Group</li>
+            <li>{{ contact.name }}</li>
+            <li>{{ contact.email }}</li>
+            <li>{{ contact.phoneNumber }}</li>
+            <li>{{ contact.address }}</li>
+            <li>{{ contact.group }}</li>
         </ul>
-        <div class="flex gap-5 items-center mr-5">
+        <div @click="handleEditButton" class="flex gap-5 items-center mr-5">
             <div class="rounded-full hover:bg-gray-200 p-2">
                 <svg width="18" height="18" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -28,6 +28,36 @@
 
 <script setup>
 
+// create a contact class for blueprint
+class Contact {
+    constructor(name, email, phoneNumber, address, group) {
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.group = group;
+    }
+}
+
+
+const contact = {
+    name: 'John Doe',
+    email: 'john.doe@gmail.com',
+    phoneNumber: '1234567890',
+    address: 'Main St, City',
+    group: 'Family'
+} 
+
+// create a new contact object
+const newContact = new Contact(contact.name, contact.email, contact.phoneNumber, contact.address, contact.group)
+
+const isEditingContact = ref(false)
+const emit = defineEmits(['isEditing'])
+
+const handleEditButton = () => {
+    isEditingContact.value = true;
+    emit('isEditing',isEditingContact.value)
+}
 </script>
 
 <style scoped></style>
