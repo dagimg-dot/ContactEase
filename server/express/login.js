@@ -1,9 +1,13 @@
 const fetch = require("node-fetch");
+// const bcrypt = require('bcryptjs');
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 const HASURA_OPERATION = `
 query ($email: String!, $password: String!) {
   user(where: {email: {_eq: $email}, password: {_eq: $password}}) {
     user_id
+    username
   }
 }`;
 
@@ -37,6 +41,8 @@ const login = async (req, res) => {
       "x-hasura-role": "anonymous",
     };
 
+    // let hashedPassword = await bcrypt.hash(password, 10); // this is for hashing the password and 10 is the salt rounds
+
     const { data, errors } = await execute({ email, password }, headers);
 
     if (errors) {
@@ -49,13 +55,33 @@ const login = async (req, res) => {
     if (data.user.length === 0) {
       return res.json({
         success: false,
+        user_id: "",
+        username: "",
         accessToken: "",
       });
     }
 
+    // generate JWT token
+    const tokenContents = {
+      sub: data.user[0].user_id.toString(), // user id from the users table
+      iat: Date.now() / 1000,
+      iss: "https://localhost:3000",
+      "https://hasura.io/jwt/claims": {
+        "x-hasura-allowed-roles": ["user"],
+        "x-hasura-user-id": data.user[0].user_id.toString(), // user id from the users table
+        "x-hasura-default-role": "user",
+        "x-hasura-role": "user",
+      },
+      exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+    };
+
+    const token = jwt.sign(tokenContents, "my_secret_key"); 
+
     return res.json({
       success: true,
-      accessToken: data.user[0].user_id,
+      user_id: data.user[0].user_id.toString(),
+      username: data.user[0].username,
+      accessToken: token,
     });
   } catch (err) {
     console.log(err);
